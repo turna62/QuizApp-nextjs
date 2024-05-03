@@ -6,7 +6,10 @@
     "start": "next start"
   },
   "dependencies": {
+    "axios": "^1.6.8",
+    "mongoose": "^8.3.2",
     "next": "latest",
+    "npm": "^10.5.0",
     "react": "18.2.0",
     "react-dom": "18.2.0"
   },
