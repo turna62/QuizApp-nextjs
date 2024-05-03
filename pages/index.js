@@ -25,9 +25,9 @@ const Home = () => {
       <h1>Welcome to Quiz App</h1>
       <Link href="/createQuiz">Create Quiz</Link>
       <ul>
-        {quizzes.map((quiz) => (
-          <li key={quiz.id}>
-            <Link href={`/quiz/${quiz.id}`}>{quiz.question}</Link>
+        {quizzes.map((quiz, index) => (
+          <li key={quiz._id}>
+            <Link href={`/quiz/${quiz._id}`}>Quiz {index + 1}</Link>
           </li>
         ))}
       </ul>

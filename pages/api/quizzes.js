@@ -1,33 +1,21 @@
+// pages/api/quizzes.js
+
 import dbConnect from '../../utils/dbConnect';
 import Quiz from '../../models/Quiz';
 
 export default async function handler(req, res) {
-  const { method } = req;
-
-  switch (method) {
-    case 'POST':
-      await handlePost(req, res);
-      break;
-    default:
-      res.status(405).json({ success: false, message: 'Method Not Allowed' });
-      break;
-  }
-}
-
-async function handlePost(req, res) {
-
-  await dbConnect();
-
-  try {
-    const { question, options, correctAnswer } = req.body;
-
-    const quiz = new Quiz({ question, options, correctAnswer });
-
-    await quiz.save();
-
-    res.status(201).json({ success: true, data: quiz });
-  } catch (error) {
-    console.error('Error saving quiz:', error);
-    res.status(400).json({ success: false, message: 'Error saving quiz' });
+  if (req.method === 'GET') {
+    try {
+      await dbConnect();
+      const quizzes = await Quiz.find({}, 'question');
+      // console.log('Quizzes:', quizzes);
+      res.status(200).json(quizzes);
+    } catch (error) {
+      console.error('Error fetching quizzes:', error);
+      res.status(500).json({ error: 'Internal server error' });
+    }
+  } else {
+    res.setHeader('Allow', ['GET']);
+    res.status(405).end(`Method ${req.method} Not Allowed`);
   }
 }
