@@ -46,7 +46,7 @@ export default function CreateQuiz({ onQuizCreate }) {
     const questions = quiz.questions.map(question => ({
       question: question.questionText,
       options: question.answerOptions.map(answerOption => answerOption.answerText),
-      correctAnswer: question.answerOptions.find(answerOption => answerOption.isCorrect)?.answerText || '' // Get correct answer text
+      correctAnswer: question.answerOptions.find(answerOption => answerOption.isCorrect)?.answerText || '' 
     }));
     
     console.log('Questions:', questions); 
@@ -85,18 +85,18 @@ export default function CreateQuiz({ onQuizCreate }) {
   
   const handleCorrectChange = (questionIndex, answerIndex) => {
     const newQuestions = [...quiz.questions];
-    newQuestions[questionIndex].answerOptions.forEach((option, index) => {
-      option.isCorrect = index === answerIndex;
+    
+    newQuestions[questionIndex].answerOptions = newQuestions[questionIndex].answerOptions.map((option, index) => {
+      return {
+        ...option,
+        isCorrect: index === answerIndex,
+      };
     });
   
-    const correctAnswerIndex = newQuestions[questionIndex].answerOptions.findIndex(option => option.isCorrect);
-    if (correctAnswerIndex !== -1) {
-      newQuestions[questionIndex].correctAnswer = newQuestions[questionIndex].answerOptions[correctAnswerIndex].answerText;
-    }
+    newQuestions[questionIndex].correctAnswer = newQuestions[questionIndex].answerOptions.find(option => option.isCorrect)?.answerText || '';
   
     setQuiz({ ...quiz, questions: newQuestions });
-  };
-  
+  };  
 
   return (
     <form onSubmit={handleSubmit}>

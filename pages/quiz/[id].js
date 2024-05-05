@@ -1,59 +1,51 @@
 // pages/quiz/[id].js
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import axios from 'axios';
 
-const QuizPage = ({ quiz }) => {
-  const [selectedAnswer, setSelectedAnswer] = useState('');
+const QuizDetail = () => {
   const router = useRouter();
+  const { id } = router.query;
+  const [quiz, setQuiz] = useState(null);
 
-  const handleAnswerSubmit = async () => {
-    const answerData = {
-      quizId: quiz.id,
-      selectedAnswer,
+  useEffect(() => {
+    const fetchQuiz = async () => {
+      try {
+        const response = await axios.get(`/api/quizzes/${id}`);
+        setQuiz(response.data);
+      } catch (error) {
+        console.error('Error fetching quiz:', error);
+      }
     };
 
-    try {
-      await axios.post('/api/quiz', answerData);
-      router.push('/');
-    } catch (error) {
-      console.error('Error submitting answer:', error);
+    if (id) {
+      fetchQuiz();
     }
-  };
+  }, [id]);
+
+  if (!quiz) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      <h1>{quiz.question}</h1>
-      {quiz.options.map((option, index) => (
-        <div key={index}>
-          <input
-            type="radio"
-            id={`option${index}`}
-            name="options"
-            value={option}
-            onChange={(e) => setSelectedAnswer(e.target.value)}
-            checked={selectedAnswer === option}
-          />
-          <label htmlFor={`option${index}`}>{option}</label>
-        </div>
-      ))}
-      <button onClick={handleAnswerSubmit}>Submit Answer</button>
+      <h1>Quiz Detail</h1>
+      <h2>{quiz.title}</h2>
+      <ul>
+        {quiz.questions.map((question, index) => (
+          <li key={index}>
+            <p>{question.question}</p>
+            <ul>
+              {question.options.map((option, i) => (
+                <li key={i}>{option}</li>
+              ))}
+            </ul>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 };
 
-export async function getServerSideProps({ params }) {
-  const { id } = params;
-  // Replace "http://your-api-url/" with the actual URL of your API
-  const res = await fetch(`http://your-api-url/quiz/${id}`);
-  const quiz = await res.json();
-
-  return {
-    props: {
-      quiz,
-    },
-  };
-}
-
-export default QuizPage;
+export default QuizDetail;
