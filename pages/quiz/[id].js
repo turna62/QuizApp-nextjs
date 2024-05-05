@@ -12,7 +12,7 @@ const QuizDetail = () => {
   useEffect(() => {
     const fetchQuiz = async () => {
       try {
-        const response = await axios.get(`/api/quizzes/${id}`);
+        const response = await axios.get(`/api/${id}`);
         setQuiz(response.data);
       } catch (error) {
         console.error('Error fetching quiz:', error);
@@ -24,6 +24,10 @@ const QuizDetail = () => {
     }
   }, [id]);
 
+  const handleStartQuiz = () => {
+    router.push(`/quiz/${id}/participate`);
+  };
+
   if (!quiz) {
     return <div>Loading...</div>;
   }
@@ -31,19 +35,8 @@ const QuizDetail = () => {
   return (
     <div>
       <h1>Quiz Detail</h1>
-      <h2>{quiz.title}</h2>
-      <ul>
-        {quiz.questions.map((question, index) => (
-          <li key={index}>
-            <p>{question.question}</p>
-            <ul>
-              {question.options.map((option, i) => (
-                <li key={i}>{option}</li>
-              ))}
-            </ul>
-          </li>
-        ))}
-      </ul>
+      <h2>Number of Questions: {quiz.questions.length}</h2>
+      <button onClick={handleStartQuiz}>Start Quiz</button>
     </div>
   );
 };
